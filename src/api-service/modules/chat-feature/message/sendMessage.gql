@@ -1,5 +1,5 @@
-mutation SendMessage($content: String!, $threadId: ID) {
-  sendMessage(content: $content, threadId: $threadId) {
+mutation SendMessage($content: String!, $threadId: ID, $imageUrl: String) {
+  sendMessage(content: $content, threadId: $threadId, imageUrl: $imageUrl) {
     success
     message
     threadId

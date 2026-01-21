@@ -13,6 +13,7 @@ export interface Message {
   threadId: string;
   content: string;
   sender: 'user' | 'assistant';
+  imageUrl?: string | null;
   createdAt: string;
 }
 

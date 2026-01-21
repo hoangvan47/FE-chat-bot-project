@@ -83,13 +83,13 @@ export const graphqlSdk = {
   },
 
   /**
-   * Send message mutation
+   * Send message mutation (with optional image)
    */
-  async SendMessage(variables: { content: string; threadId?: string }) {
+  async SendMessage(variables: { content: string; threadId?: string; imageUrl?: string }) {
     const { data } = await apolloClient.mutate({
       mutation: gql`
-        mutation SendMessage($content: String!, $threadId: ID) {
-          sendMessage(content: $content, threadId: $threadId) {
+        mutation SendMessage($content: String!, $threadId: ID, $imageUrl: String) {
+          sendMessage(content: $content, threadId: $threadId, imageUrl: $imageUrl) {
             success
             message
             threadId
