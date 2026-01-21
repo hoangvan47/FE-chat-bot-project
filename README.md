@@ -1,6 +1,6 @@
 # 🎨 Chat Bot Frontend - React UI
 
-Modern chat interface với **TypeScript**, **React Query**, **Chakra UI**, và **GraphQL Codegen**.
+Modern chat interface với **TypeScript**, **React Query**, **Chakra UI**, **Cloudinary Upload**, và **Input Suggestions**.
 
 ## 🚀 Tech Stack
 
@@ -10,41 +10,12 @@ Modern chat interface với **TypeScript**, **React Query**, **Chakra UI**, và 
 - **React Query** (TanStack Query) - State management
 - **Apollo Client** - GraphQL HTTP client
 - **GraphQL Codegen** - Auto-generate types
+- **Cloudinary** - Image upload & CDN
 - **React Router DOM** - Routing
 - **React Hook Form** + **Yup** - Form validation
 - **React Hot Toast** - Notifications
 - **React Icons** - Icons
 - **Lazy Loading** - Code splitting
-
----
-
-## 📁 Structure
-
-```
-frontend/
-├── src/
-│   ├── components/
-│   │   ├── auth/                  # Login, Register (Chakra UI)
-│   │   ├── chat/                  # Chat UI (Chakra UI)
-│   │   ├── layout/                # Sidebar (Chakra UI)
-│   │   ├── common/                # ProtectedRoute
-│   │   └── ui/                    # Skeleton, Spinner, Provider
-│   ├── contexts/
-│   │   └── AuthContext.tsx        # Auth state
-│   ├── hooks/graphql/
-│   │   ├── useAuth.ts             # Login, Register, Logout
-│   │   └── useChat.ts             # Send Message
-│   ├── lib/
-│   │   ├── apollo-client.ts       # GraphQL client
-│   │   └── validations.ts         # Yup schemas
-│   ├── generated/
-│   │   └── graphql.ts             # Auto-generated types ✨
-│   ├── types/                     # Manual TypeScript types
-│   ├── pages/                     # Lazy-loaded pages
-│   ├── App.tsx                    # Routes with lazy loading
-│   └── main.tsx                   # Entry point
-└── ENV_TEMPLATE.txt               # Environment template
-```
 
 ---
 
@@ -55,6 +26,7 @@ frontend/
 - Node.js v22+ (recommended)
 - Yarn package manager  
 - Backend API running
+- Cloudinary account (optional)
 
 ### 1. Install Dependencies
 
@@ -62,14 +34,24 @@ frontend/
 yarn install
 ```
 
-### 2. Setup Environment
+### 2. Setup Environment Variables
 
 ```bash
-# Copy template
-cp ENV_TEMPLATE.txt .env
+# Copy example file
+cp .env.example .env.local
 
-# Edit .env
+# Edit .env.local
+```
+
+**Required:**
+```env
 VITE_GRAPHQL_URL=http://localhost:3000/graphql
+```
+
+**Optional (for image uploads):**
+```env
+VITE_CLOUDINARY_CLOUD_NAME=your-cloud-name
+VITE_CLOUDINARY_UPLOAD_PRESET=chat-bot-unsigned
 ```
 
 ### 3. Generate GraphQL Types (Optional)
@@ -82,7 +64,7 @@ yarn codegen
 yarn codegen:watch
 ```
 
-### 4. Start Development
+### 4. Start Development Server
 
 ```bash
 yarn dev
@@ -92,23 +74,57 @@ yarn dev
 
 ---
 
-## 📝 Environment Variables
+## 📝 Environment Variables (.env.local)
 
-`ENV_TEMPLATE.txt` → `.env`:
+Based on `.env.example`:
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `VITE_GRAPHQL_URL` | Backend GraphQL endpoint | `http://localhost:3000/graphql` |
+| Variable | Description | Required | Example |
+|----------|-------------|----------|---------|
+| `VITE_GRAPHQL_URL` | Backend GraphQL endpoint | ✅ Yes | `http://localhost:3000/graphql` |
+| `VITE_CLOUDINARY_CLOUD_NAME` | Cloudinary cloud name | ⚪ Optional | `your-cloud-name` |
+| `VITE_CLOUDINARY_UPLOAD_PRESET` | Upload preset (unsigned) | ⚪ Optional | `chat-bot-unsigned` |
 
-**Note:** All `VITE_*` variables are injected at build time!
+**Note:** 
+- `.env.example` - Template (committed to Git)
+- `.env.local` - Your actual values (ignored by Git)
+- All `VITE_*` variables are injected at build time
 
 ---
 
-## 🎨 Features
+## ✨ Features
 
-### ✨ UI Components (Chakra UI)
+### 1. 📷 Image Upload (Cloudinary)
 
-All components use Chakra UI v2:
+**Setup:**
+1. Create Cloudinary account (free): https://cloudinary.com
+2. Get cloud name from dashboard
+3. Create unsigned upload preset: `chat-bot-unsigned`
+4. Add to `.env.local`
+5. Restart dev server
+
+**Usage:**
+- Click **+** button
+- Upload widget opens
+- Select image
+- Image preview appears
+- Send with message
+
+### 2. 💡 Input Suggestions
+
+**Features:**
+- Auto-suggest from previous messages
+- Common phrases included
+- Type 2+ characters to see suggestions
+- Click to auto-fill
+
+**Suggestions:**
+- Previous user messages
+- Common chat phrases
+- Context-aware (based on AI response)
+
+### 3. 🎨 Chakra UI Components
+
+All forms use Chakra UI v2:
 
 ```tsx
 <FormControl isInvalid={!!errors.email}>
@@ -118,72 +134,28 @@ All components use Chakra UI v2:
 </FormControl>
 ```
 
-**Components:**
-- `Box`, `Flex`, `VStack`, `HStack` - Layout
-- `Button`, `IconButton` - Buttons with loading states
-- `Input`, `Textarea` - Form inputs
-- `FormControl`, `FormLabel`, `FormErrorMessage` - Forms
-- `Heading`, `Text`, `Link` - Typography
-- `Avatar`, `Spinner`, `Skeleton` - UI elements
-- `Divider`, `Separator` - Dividers
+### 4. 🔄 React Query State Management
 
-### 🔄 State Management (React Query)
-
-Simple hooks, no Redux complexity:
+Simple hooks, no Redux:
 
 ```tsx
-// Login
 const loginMutation = useLogin();
 await loginMutation.mutateAsync({ email, password });
-
-// Send message
-const sendMessage = useSendMessage();
-await sendMessage.mutateAsync({ content, threadId });
 ```
 
-**Benefits:**
-- ✅ Automatic caching
-- ✅ Loading/error states
-- ✅ Optimistic updates
-- ✅ Retry on failure
-- ✅ No boilerplate!
+### 5. 📦 Lazy Loading
 
-### 📦 GraphQL Codegen
+All pages lazy-loaded:
+- LoginPage: 1.75 KB
+- RegisterPage: 1.65 KB
+- ChatPage: 25.89 KB
 
-Auto-generate TypeScript types from backend schema:
+### 6. 💀 Skeleton Loaders
 
-```bash
-yarn codegen
-```
-
-**Generates:**
-- TypeScript interfaces
-- React hooks (optional)
-- Type-safe queries/mutations
-
-### 🎯 Lazy Loading
-
-All pages lazy-loaded for performance:
-
-```tsx
-const LoginPage = lazy(() => import('./pages/LoginPage'));
-```
-
-**Benefits:**
-- ✅ Smaller initial bundle
-- ✅ Faster first load
-- ✅ Code splitting
-- ✅ Better performance
-
-### 💀 Skeleton Loaders
-
-Loading states with Chakra Skeleton:
-
-```tsx
-<MessageSkeleton />      // Chat messages loading
-<FormSkeleton />         // Form loading
-<ChatPageSkeleton />     // Full page loading
-```
+Loading states:
+- `<MessageSkeleton />` - Chat loading
+- `<FormSkeleton />` - Form loading
+- `<LoadingSpinner />` - General loading
 
 ---
 
@@ -193,8 +165,8 @@ Loading states with Chakra Skeleton:
 yarn dev              # Development server
 yarn build            # Production build
 yarn preview          # Preview production build
-yarn codegen          # Generate GraphQL types
-yarn codegen:watch    # Watch mode for codegen
+yarn codegen          # Generate GraphQL types from backend
+yarn codegen:watch    # Watch mode
 yarn lint             # Run ESLint
 ```
 
@@ -206,22 +178,25 @@ yarn lint             # Run ESLint
 # Build
 yarn build
 
-# Preview
-yarn preview
-
 # Output
 dist/
 ├── index.html
 ├── assets/
-│   ├── index-[hash].js
-│   └── index-[hash].css
+│   ├── index-[hash].js  (526KB → 172KB gzipped)
+│   └── index-[hash].css (5.4KB → 1.7KB gzipped)
 ```
 
 **Deploy to:**
-- Vercel (zero config)
+- Vercel
 - Netlify
 - Cloudflare Pages
-- Any static hosting
+
+**Environment Variables on Deploy:**
+```env
+VITE_GRAPHQL_URL=https://your-backend-api.com/graphql
+VITE_CLOUDINARY_CLOUD_NAME=your-cloud-name
+VITE_CLOUDINARY_UPLOAD_PRESET=chat-bot-unsigned
+```
 
 ---
 
@@ -235,6 +210,41 @@ dist/
 
 ---
 
+## 📁 Project Structure
+
+```
+frontend/
+├── src/
+│   ├── api-service/              # GraphQL SDK layer
+│   │   ├── generated/           # Auto-generated types
+│   │   ├── modules/             # Feature-based .gql files
+│   │   │   ├── auth-feature/
+│   │   │   │   ├── auth/        # login, register, logout
+│   │   │   │   └── account/     # me
+│   │   │   └── chat-feature/
+│   │   │       ├── message/     # sendMessage
+│   │   │       └── thread/      # getThreads, getThread
+│   │   └── index.ts             # SDK with Request Coalescing
+│   ├── components/
+│   │   ├── auth/                # Login, Register (Chakra UI)
+│   │   ├── chat/                # Chat UI with Upload & Suggestions
+│   │   ├── layout/              # Sidebar
+│   │   └── ui/                  # Skeleton, Spinner, Provider
+│   ├── contexts/                # Auth context
+│   ├── hooks/
+│   │   ├── graphql/             # React Query hooks
+│   │   ├── useCloudinaryUpload  # Image upload
+│   │   └── useInputSuggestions  # Autocomplete
+│   ├── core/                    # Config, constants, headers
+│   ├── lib/                     # Apollo client, validations
+│   ├── types/                   # TypeScript types
+│   └── pages/                   # Lazy-loaded pages
+├── .env.example                 # Environment template ⭐
+└── README.md                    # This file
+```
+
+---
+
 ## 🧪 Testing
 
 ### Development
@@ -245,24 +255,48 @@ yarn dev
 # Login: user1@test.com / password123
 ```
 
-### Production Build
+### Test Image Upload
 
-```bash
-yarn build
-yarn preview
-```
+1. Login
+2. Click **+** button
+3. Upload image
+4. See preview
+5. Send message
+6. Image appears in chat
 
-### Features to Test
+### Test Suggestions
 
-- ✅ Login/Register with validation
-- ✅ Protected routes
-- ✅ Chat interface with Sidebar
-- ✅ Send message → AI response
-- ✅ Skeleton loaders while loading
-- ✅ Toast notifications
-- ✅ Upload button (toast)
-- ✅ Sidebar icons (toast "under development")
-- ✅ Logout
+1. Type "H"
+2. See "Hello!", "How are you?"
+3. Click suggestion
+4. Input auto-fills
+
+---
+
+## 🎨 Cloudinary Setup (Optional)
+
+**If you want image uploads:**
+
+1. **Create account:** https://cloudinary.com/users/register_free
+2. **Get cloud name:** Dashboard → Account Details
+3. **Create upload preset:**
+   - Go to Settings → Upload
+   - Click "Add upload preset"
+   - Name: `chat-bot-unsigned`
+   - Signing Mode: **Unsigned** ⭐
+   - Save
+4. **Update `.env.local`:**
+   ```env
+   VITE_CLOUDINARY_CLOUD_NAME=your-cloud-name
+   VITE_CLOUDINARY_UPLOAD_PRESET=chat-bot-unsigned
+   ```
+5. **Restart:** `yarn dev`
+
+**If you skip Cloudinary:**
+- Upload button shows "not configured" toast
+- App works normally without images
+
+See `../CLOUDINARY_SETUP.md` for detailed guide.
 
 ---
 
@@ -270,12 +304,19 @@ yarn preview
 
 ### Backend not connected?
 
-Check `.env`:
+Check `.env.local`:
 ```env
 VITE_GRAPHQL_URL=http://localhost:3000/graphql
 ```
 
 Make sure backend is running!
+
+### Cloudinary upload not working?
+
+1. Check `.env.local` has correct values
+2. Verify upload preset is **unsigned**
+3. Check browser console for errors
+4. Restart dev server
 
 ### White screen?
 
@@ -283,68 +324,52 @@ Make sure backend is running!
 2. Check errors
 3. Clear cache (Cmd+Shift+R)
 
-### Build errors?
+---
 
-```bash
-# Clear cache
-rm -rf node_modules/.vite dist
+## 📊 Performance
 
-# Reinstall
-yarn install
+**Build Output:**
+- Total bundle: 526 KB (172 KB gzipped)
+- Lazy loaded chunks:
+  - Login: 1.75 KB
+  - Register: 1.65 KB
+  - Chat: 25.89 KB
 
-# Build
-yarn build
-```
+**Optimizations:**
+- ✅ Lazy loading
+- ✅ Code splitting
+- ✅ React Query caching
+- ✅ Request coalescing
+- ✅ Skeleton loaders
 
 ---
 
-## 🚀 Deploy to Vercel
+## ✅ Features Checklist
 
-```bash
-# Install Vercel CLI
-yarn global add vercel
-
-# Deploy
-vercel
-
-# Add environment variable in dashboard:
-# VITE_GRAPHQL_URL=https://your-backend.com/graphql
-```
-
----
-
-## 📊 Performance Optimizations
-
-### ✅ Implemented:
-
-- **Lazy Loading** - Pages loaded on-demand
-- **Code Splitting** - Smaller bundles
-- **React Query** - Smart caching
-- **Skeleton Loaders** - Better UX
-- **Chakra UI** - Optimized components
-- **Vite** - Fast HMR & build
-
-### Build Output:
-
-```
-dist/assets/index-[hash].js  ~800KB (gzipped: ~250KB)
-dist/assets/index-[hash].css ~5KB
-```
+- [x] Login/Register with Yup validation
+- [x] Protected routes
+- [x] Chakra UI components
+- [x] Chat interface with sidebar
+- [x] 📷 **Image upload (Cloudinary)**
+- [x] 💡 **Input suggestions**
+- [x] Message bubbles (user vs AI)
+- [x] "Generate Free" button
+- [x] Auto-scroll messages
+- [x] Loading states (skeleton + spinner)
+- [x] Toast notifications
+- [x] Lazy loading
+- [x] GraphQL Codegen
+- [x] Type-safe throughout
 
 ---
 
-## ✅ Code Quality
+## 📚 Documentation
 
-- ✅ **TypeScript** - 100% type-safe
-- ✅ **ESLint** - Code linting
-- ✅ **Yup** - Runtime validation
-- ✅ **GraphQL Codegen** - Type safety
-- ✅ **Lazy Loading** - Performance
-- ✅ **Skeleton Loaders** - Better UX
-- ✅ **Error Handling** - Comprehensive
-- ✅ **Clean Code** - Well-structured
+- **Setup:** This README
+- **Cloudinary:** `../CLOUDINARY_SETUP.md`
+- **Features:** `../FEATURES_IMPLEMENTATION.md`
+- **API Service:** `src/api-service/README.md`
 
 ---
 
 **Built with ❤️ using Modern Frontend Stack**
-# FE-chat-bot-project
