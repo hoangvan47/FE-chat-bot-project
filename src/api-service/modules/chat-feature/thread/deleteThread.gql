@@ -1,0 +1,6 @@
+mutation DeleteThread($threadId: ID!) {
+  deleteThread(threadId: $threadId) {
+    success
+    message
+  }
+}

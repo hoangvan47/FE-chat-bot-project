@@ -1,0 +1,20 @@
+query GetThread($threadId: ID!) {
+  thread(threadId: $threadId) {
+    success
+    thread {
+      id
+      userId
+      title
+      latestMessage
+      createdAt
+      updatedAt
+      messages {
+        id
+        threadId
+        content
+        sender
+        createdAt
+      }
+    }
+  }
+}

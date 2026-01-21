@@ -1,0 +1,97 @@
+"""
+Indicates exactly one field must be supplied and this field must not be `null`.
+"""
+directive @oneOf on INPUT_OBJECT
+
+type User {
+  id: ID!
+  email: String!
+  username: String!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type AuthResponse {
+  success: Boolean!
+  message: String!
+  user: User
+  accessToken: String
+  refreshToken: String
+}
+
+type Response {
+  success: Boolean!
+  message: String!
+}
+
+type Query {
+  me: User!
+  threads(page: Int, limit: Int): ThreadsResponse!
+  thread(threadId: ID!): ThreadResponse!
+}
+
+type Mutation {
+  register(email: String!, username: String!, password: String!): AuthResponse!
+  login(email: String!, password: String!): AuthResponse!
+  logout: Response!
+  refreshToken(refreshToken: String!): AuthResponse!
+  sendMessage(content: String!, threadId: ID): ChatResponse!
+  deleteThread(threadId: ID!): DeleteResponse!
+}
+
+type Message {
+  id: ID!
+  threadId: String!
+  content: String!
+  sender: String!
+  createdAt: String!
+}
+
+type Thread {
+  id: ID!
+  userId: String
+  title: String
+  latestMessage: String
+  createdAt: String!
+  updatedAt: String!
+  messages: [Message!]
+}
+
+type ChatResponse {
+  success: Boolean!
+  message: String!
+  threadId: String
+  aiMessage: String
+  usage: Usage
+}
+
+type Usage {
+  promptTokens: Int
+  completionTokens: Int
+  totalTokens: Int
+}
+
+type PageInfo {
+  total: Int!
+  page: Int!
+  limit: Int!
+  totalPages: Int!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type ThreadsResponse {
+  success: Boolean!
+  threads: [Thread!]!
+  pageInfo: PageInfo!
+}
+
+type ThreadResponse {
+  success: Boolean!
+  thread: Thread
+}
+
+type DeleteResponse {
+  success: Boolean!
+  message: String!
+}

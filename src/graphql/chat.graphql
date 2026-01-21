@@ -1,0 +1,64 @@
+# Chat Mutations and Queries
+
+mutation SendMessage($content: String!, $threadId: ID) {
+  sendMessage(content: $content, threadId: $threadId) {
+    success
+    message
+    threadId
+    aiMessage
+    usage {
+      promptTokens
+      completionTokens
+      totalTokens
+    }
+  }
+}
+
+query GetThreads($page: Int, $limit: Int) {
+  threads(page: $page, limit: $limit) {
+    success
+    threads {
+      id
+      title
+      latestMessage
+      createdAt
+      updatedAt
+    }
+    pageInfo {
+      total
+      page
+      limit
+      totalPages
+      hasNextPage
+      hasPreviousPage
+    }
+  }
+}
+
+query GetThread($threadId: ID!) {
+  thread(threadId: $threadId) {
+    success
+    thread {
+      id
+      userId
+      title
+      latestMessage
+      createdAt
+      updatedAt
+      messages {
+        id
+        threadId
+        content
+        sender
+        createdAt
+      }
+    }
+  }
+}
+
+mutation DeleteThread($threadId: ID!) {
+  deleteThread(threadId: $threadId) {
+    success
+    message
+  }
+}

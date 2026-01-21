@@ -1,0 +1,13 @@
+mutation SendMessage($content: String!, $threadId: ID) {
+  sendMessage(content: $content, threadId: $threadId) {
+    success
+    message
+    threadId
+    aiMessage
+    usage {
+      promptTokens
+      completionTokens
+      totalTokens
+    }
+  }
+}

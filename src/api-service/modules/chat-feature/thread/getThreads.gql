@@ -1,0 +1,20 @@
+query GetThreads($page: Int, $limit: Int) {
+  threads(page: $page, limit: $limit) {
+    success
+    threads {
+      id
+      title
+      latestMessage
+      createdAt
+      updatedAt
+    }
+    pageInfo {
+      total
+      page
+      limit
+      totalPages
+      hasNextPage
+      hasPreviousPage
+    }
+  }
+}
