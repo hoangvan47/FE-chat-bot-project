@@ -35,7 +35,7 @@ type Mutation {
   login(email: String!, password: String!): AuthResponse!
   logout: Response!
   refreshToken(refreshToken: String!): AuthResponse!
-  sendMessage(content: String!, threadId: ID): ChatResponse!
+  sendMessage(content: String!, threadId: ID, imageUrl: String): ChatResponse!
   deleteThread(threadId: ID!): DeleteResponse!
 }
 
@@ -44,6 +44,7 @@ type Message {
   threadId: String!
   content: String!
   sender: String!
+  imageUrl: String
   createdAt: String!
 }
 

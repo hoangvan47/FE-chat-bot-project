@@ -37,6 +37,8 @@ const ChatContainer = () => {
         imageUrl: imageUrl || undefined,
       });
 
+      console.log('SendMessage result:', result); // Debug log
+
       // Set thread ID if new
       if (result.threadId && !currentThreadId) {
         setCurrentThreadId(result.threadId);
@@ -53,8 +55,12 @@ const ChatContainer = () => {
           createdAt: new Date().toISOString(),
         };
         setMessages((prev) => [...prev, aiMessage]);
+        console.log('AI message added:', aiMessage); // Debug log
+      } else {
+        console.warn('No AI message in response'); // Debug log
       }
     } catch (error) {
+      console.error('Send message error:', error); // Debug log
       // Remove optimistic message on error
       setMessages((prev) => prev.filter((m) => m.id !== tempUserMessage.id));
     }

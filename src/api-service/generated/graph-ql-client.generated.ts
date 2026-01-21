@@ -46,6 +46,7 @@ export type Message = {
   content: Scalars['String']['output'];
   createdAt: Scalars['String']['output'];
   id: Scalars['ID']['output'];
+  imageUrl?: Maybe<Scalars['String']['output']>;
   sender: Scalars['String']['output'];
   threadId: Scalars['String']['output'];
 };
@@ -86,6 +87,7 @@ export type MutationRegisterArgs = {
 
 export type MutationSendMessageArgs = {
   content: Scalars['String']['input'];
+  imageUrl?: InputMaybe<Scalars['String']['input']>;
   threadId?: InputMaybe<Scalars['ID']['input']>;
 };
 
@@ -193,6 +195,7 @@ export type RegisterMutation = { __typename?: 'Mutation', register: { __typename
 export type SendMessageMutationVariables = Exact<{
   content: Scalars['String']['input'];
   threadId?: InputMaybe<Scalars['ID']['input']>;
+  imageUrl?: InputMaybe<Scalars['String']['input']>;
 }>;
 
 
@@ -275,8 +278,8 @@ export const RegisterDocument = gql`
 }
     `;
 export const SendMessageDocument = gql`
-    mutation SendMessage($content: String!, $threadId: ID) {
-  sendMessage(content: $content, threadId: $threadId) {
+    mutation SendMessage($content: String!, $threadId: ID, $imageUrl: String) {
+  sendMessage(content: $content, threadId: $threadId, imageUrl: $imageUrl) {
     success
     message
     threadId
